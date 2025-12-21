@@ -4,453 +4,550 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>It's my 2025 | btm_m</title>
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: VT323 (Pixel), Zen Kaku Gothic New (Japanese/Clean) -->
-    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet">
     
+    <!-- Google Fonts: DotGothic16 for CJK Pixel style -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Mammoth.js for docx rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+
     <style>
+        /* --- CORE AESTHETICS --- */
         :root {
             --win-gray: #c0c0c0;
             --win-blue: #000080;
-            --neon-pink: #ff00ff;
-            --neon-cyan: #00ffff;
-            --neon-green: #39ff14;
-            --acid-purple: #b026ff;
+            --win-blue-light: #1084d0;
+            --y2k-pink: #ff00ff;
+            --y2k-cyan: #00ffff;
+            --y2k-lime: #ccff00;
         }
 
         body {
-            background-color: #008080;
+            font-family: 'DotGothic16', sans-serif;
+            background-color: #008080; /* Win98 Teal */
             background-image: 
-                linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000),
-                linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000);
-            background-size: 4px 4px;
-            background-position: 0 0, 2px 2px;
-            font-family: 'Zen Kaku Gothic New', sans-serif;
-            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='24' style='fill:black;stroke:white;stroke-width:1px;'><path d='M0,0 L0,20 L4,16 L8,24 L10,23 L6,15 L12,15 Z'/></svg>"), auto;
-            overflow-x: hidden;
+                linear-gradient(45deg, #ff00ff 25%, transparent 25%, transparent 75%, #ff00ff 75%, #ff00ff),
+                linear-gradient(45deg, #ff00ff 25%, transparent 25%, transparent 75%, #ff00ff 75%, #ff00ff);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
             color: black;
+            overflow-x: hidden;
+            cursor: url('data:image/svg+xml;utf8,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.5 2L18 13.5H11.5L16 22L12.5 23.5L8 15H2L5.5 2Z" fill="white" stroke="black" stroke-width="1.5"/></svg>'), auto;
         }
 
-        /* Scanline Effect */
-        .scanlines {
+        /* --- WINDOWS 98 STYLES --- */
+        .win98-window {
+            background: var(--win-gray);
+            box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px #808080, inset 2px 2px #ffffff;
+            padding: 3px;
+        }
+
+        .win98-title-bar {
+            background: linear-gradient(90deg, var(--win-blue), var(--win-blue-light));
+            padding: 3px 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .win98-btn {
+            background: var(--win-gray);
+            box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+            border: none;
+            min-width: 20px;
+            min-height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            active: box-shadow: inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf;
+        }
+
+        .win98-inset {
+            background: white;
+            box-shadow: inset 2px 2px #0a0a0a, inset -1px -1px #ffffff, inset 1px 1px #808080, inset -2px -2px #dfdfdf;
+        }
+
+        /* --- CRT EFFECT --- */
+        .crt-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
-            background-size: 100% 4px;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
             pointer-events: none;
             z-index: 9999;
+            animation: flicker 0.15s infinite;
         }
 
-        /* Windows 98 Box Style */
-        .win98-box {
-            background-color: var(--win-gray);
-            box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px grey, inset 2px 2px #fff;
-            padding: 2px;
+        @keyframes flicker {
+            0% { opacity: 0.95; }
+            50% { opacity: 1; }
+            100% { opacity: 0.98; }
         }
 
-        .win98-header {
-            background: linear-gradient(90deg, var(--win-blue), #1084d0);
-            color: white;
-            padding: 2px 4px;
-            font-family: 'VT323', monospace;
-            font-size: 1.2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        /* --- DECORATIONS & UTILS --- */
+        .scrollbar-retro::-webkit-scrollbar {
+            width: 16px;
+            height: 16px;
+            background: #dfdfdf;
         }
-
-        .win98-btn {
+        .scrollbar-retro::-webkit-scrollbar-thumb {
             background: var(--win-gray);
-            box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px grey, inset 2px 2px #dfdfdf;
-            border: none;
-            min-width: 20px;
-            min-height: 20px;
-            font-family: 'VT323', monospace;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
+            border: 2px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
         }
-
-        .win98-btn:active {
-            box-shadow: inset 1px 1px #0a0a0a, inset -1px -1px #fff, inset 2px 2px grey, inset -2px -2px #dfdfdf;
-        }
-
-        .inset-box {
-            background: #fff;
-            box-shadow: inset 2px 2px #0a0a0a, inset -2px -2px #fff;
-            padding: 10px;
-        }
-
-        /* Y2K / Harajuku Elements */
-        .y2k-text {
-            text-shadow: 2px 2px 0px var(--neon-cyan), -2px -2px 0px var(--neon-pink);
+        .scrollbar-retro::-webkit-scrollbar-button {
+            background: var(--win-gray);
+            width: 16px;
+            height: 16px;
+            border: 2px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
         }
 
         .rainbow-text {
             background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-weight: 900;
+            font-weight: bold;
         }
 
         .sticker {
             position: absolute;
             pointer-events: none;
             z-index: 10;
-            filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.5));
+            animation: float 3s ease-in-out infinite;
         }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 16px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #dfdfdf;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--win-gray);
-            box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff;
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
         }
 
-        /* Animations */
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
-        .blink { animation: blink 1s step-end infinite; }
-
-        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
-        .float-anim { animation: float 3s ease-in-out infinite; }
-
-        .crt-monitor {
-            animation: textShadow 1.6s infinite;
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 50;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(2px);
         }
-        
-        /* HEIF/Image Handling */
-        .gallery-img {
-            transition: transform 0.2s;
-            image-rendering: pixelated; /* Retro feel */
-        }
-        .gallery-img:hover {
-            transform: scale(1.05);
-            z-index: 20;
-            position: relative;
-            border: 2px solid var(--neon-pink);
+        .modal-overlay.active {
+            display: flex;
         }
 
-        /* Music List Specifics */
-        .music-row:nth-child(odd) { background-color: #e0e0e0; }
-        .music-row:hover { background-color: var(--win-blue); color: white; cursor: pointer; }
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+            background: black;
+            color: var(--y2k-lime);
+            border-bottom: 2px solid white;
+        }
+        .marquee-content {
+            display: inline-block;
+            animation: marquee 15s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(100vw); }
+            100% { transform: translateX(-100%); }
+        }
     </style>
 </head>
-<body class="min-h-screen p-2 md:p-6 pb-20 selection:bg-pink-500 selection:text-white">
+<body class="min-h-screen pb-12">
 
-    <div class="scanlines"></div>
+    <!-- CRT Overlay -->
+    <div class="crt-overlay"></div>
 
-    <!-- Floating Decor -->
-    <div class="fixed top-10 right-5 text-4xl animate-bounce z-0">💿</div>
-    <div class="fixed bottom-10 left-5 text-4xl float-anim z-0" style="animation-delay: 1s;">👾</div>
-    <div class="fixed top-1/2 left-2 text-2xl z-0 rotate-12">★</div>
-    <div class="fixed top-1/3 right-10 text-3xl z-0 -rotate-12">🌸</div>
+    <!-- Floating Stickers (Decoration) -->
+    <div class="sticker text-4xl" style="top: 10%; right: 5%;">💿</div>
+    <div class="sticker text-4xl" style="top: 20%; left: 5%; animation-delay: 1s;">👾</div>
+    <div class="sticker text-5xl" style="bottom: 15%; right: 10%; animation-delay: 0.5s;">✨</div>
+
+    <!-- Top Marquee -->
+    <div class="marquee-container py-1 font-bold text-lg">
+        <div class="marquee-content">
+            WELCOME TO MY 2025 LOG // Y2K VIBES ONLY // HARAJUKU STYLE // WINDOWS 98 FOREVER // MUSIC IS LIFE // WELCOME TO MY 2025 LOG //
+        </div>
+    </div>
 
     <!-- Main Container -->
-    <div class="max-w-4xl mx-auto space-y-6 relative z-10">
+    <div class="container mx-auto px-4 py-8 max-w-4xl relative z-20">
 
-        <!-- Marquee Header -->
-        <div class="win98-box mb-4">
-            <div class="bg-black text-green-400 font-mono p-1 overflow-hidden whitespace-nowrap text-sm md:text-base">
-                <marquee scrollamount="8">
-                    *** WELCOME TO BTM_M'S 2025 CYBERSPACE *** LOADING... 100% *** HARAJUKU VIBES ONLINE *** Y2K AESTHETICS DETECTED ***
-                </marquee>
+        <!-- Header / Title -->
+        <header class="text-center mb-8 relative">
+            <h1 class="text-5xl md:text-7xl font-bold text-white drop-shadow-[4px_4px_0_rgba(0,0,0,1)] uppercase tracking-tighter" style="text-shadow: 3px 3px 0px var(--y2k-pink), -2px -2px 0px var(--win-blue);">
+                It's my 2025
+            </h1>
+            <div class="inline-block bg-white text-black px-2 py-0.5 transform -rotate-2 mt-2 border-2 border-black font-bold">
+                btm_m's Digital World
             </div>
-        </div>
+        </header>
 
-        <!-- 1. Profile Section (Hero) -->
-        <div class="win98-box w-full">
-            <div class="win98-header">
-                <div class="flex items-center gap-2">
-                    <span>👤</span>
-                    <span>Profile.exe</span>
-                </div>
+        <!-- Profile Section -->
+        <div class="win98-window mb-8">
+            <div class="win98-title-bar">
+                <span><i class="fas fa-user-circle mr-2"></i>User Profile.exe</span>
                 <div class="flex gap-1">
-                    <button class="win98-btn">_</button>
-                    <button class="win98-btn">□</button>
-                    <button class="win98-btn">×</button>
+                    <button class="win98-btn"><i class="fas fa-window-minimize text-xs"></i></button>
+                    <button class="win98-btn"><i class="fas fa-times text-xs"></i></button>
                 </div>
             </div>
-            <div class="p-4 flex flex-col md:flex-row gap-6 items-center md:items-start bg-[#c0c0c0]">
-                <!-- Avatar -->
+            <div class="p-4 bg-[#c0c0c0] flex flex-col md:flex-row gap-6 items-center md:items-start">
+                <!-- Avatar with frame -->
                 <div class="relative group">
-                    <div class="border-2 border-white shadow-[2px_2px_0_#000] p-1 bg-white">
-                        <img src="https://records.btm-m.site/assets/images/0M_avatar.png" alt="btm_m avatar" class="w-32 h-32 md:w-40 md:h-40 object-cover">
+                    <div class="win98-inset border-2 p-1 bg-white">
+                        <img src="https://records.btm-m.site/assets/images/0M_avatar.png" alt="btm_m avatar" class="w-32 h-32 object-cover pixelated">
                     </div>
-                    <span class="absolute -top-2 -right-2 text-2xl rotate-12 group-hover:scale-125 transition-transform">✨</span>
-                    <div class="bg-black text-green-500 text-xs text-center mt-2 font-mono border border-gray-500">ONLINE</div>
+                    <div class="absolute -bottom-2 -right-2 bg-yellow-300 border border-black px-2 py-0.5 text-xs font-bold transform rotate-6">ONLINE</div>
                 </div>
-
+                
                 <!-- Info -->
-                <div class="flex-1 w-full space-y-3 font-mono">
-                    <h1 class="text-4xl md:text-6xl font-black y2k-text uppercase tracking-tighter" style="font-family: 'VT323';">btm_m</h1>
-                    
-                    <div class="inset-box text-sm md:text-lg space-y-1">
-                        <p><span class="text-blue-800 font-bold">AGE:</span> 20 (2005.10.19)</p>
-                        <p><span class="text-blue-800 font-bold">GENRE:</span> J-POP / ELECTRO</p>
-                        <p><span class="text-blue-800 font-bold">MOOD:</span> 2025 MODE ON</p>
-                        <p class="pt-2">
-                            <a href="https://www.btm-m.site" target="_blank" class="text-blue-600 underline hover:bg-blue-600 hover:text-white px-1">
-                                🌐 www.btm-m.site
-                            </a>
-                        </p>
-                    </div>
-
-                    <!-- Countdown Block -->
-                    <div class="bg-black border-2 border-gray-500 p-2 text-center mt-4 shadow-[inset_2px_2px_4px_rgba(0,0,0,0.5)]">
-                        <p class="text-[#39ff14] font-mono text-xs uppercase mb-1">Countdown to 2026</p>
-                        <div id="countdown" class="text-red-500 font-bold text-2xl md:text-3xl font-mono tracking-widest blink">
-                            00:00:00:00
+                <div class="flex-1 w-full text-sm md:text-base">
+                    <div class="bg-white border-2 border-gray-500 p-3 shadow-inner h-full">
+                        <p><span class="text-blue-800 font-bold">ID:</span> btm_m</p>
+                        <p><span class="text-blue-800 font-bold">Birth:</span> 2005.10.19 (Age: 20)</p>
+                        <p><span class="text-blue-800 font-bold">Genre:</span> <span class="bg-black text-white px-1">J-POP</span></p>
+                        <p class="mt-2"><a href="https://www.btm-m.site" target="_blank" class="text-blue-600 underline hover:bg-blue-600 hover:text-white transition-colors">🌐 Official Page</a></p>
+                        
+                        <div class="mt-4 border-t border-dashed border-gray-400 pt-2 text-xs text-gray-500">
+                            Status: Dreaming in 2025...
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
-            <!-- 2. Music Works (Left Column) -->
-            <div class="win98-box h-full flex flex-col">
-                <div class="win98-header bg-gradient-to-r from-pink-700 to-purple-700">
-                    <div class="flex items-center gap-2">
-                        <span>💾</span>
-                        <span>My_Works_2025</span>
-                    </div>
-                    <button class="win98-btn">×</button>
-                </div>
-                <div class="p-3 bg-[#c0c0c0] flex-1 space-y-4" id="works-container">
-                    <!-- Works injected by JS -->
-                </div>
+        <!-- Countdown Section -->
+        <div class="win98-window mb-8 max-w-md mx-auto transform hover:scale-105 transition-transform duration-300">
+            <div class="win98-title-bar bg-gradient-to-r from-red-800 to-red-600">
+                <span><i class="fas fa-clock mr-2"></i>Countdown_to_2026.bat</span>
             </div>
-
-            <!-- 3. Top 20 Songs (Right Column) -->
-            <div class="win98-box h-full flex flex-col">
-                <div class="win98-header bg-gradient-to-r from-orange-700 to-yellow-600">
-                    <div class="flex items-center gap-2">
-                        <span>🎵</span>
-                        <span>Winamp_Playlist.m3u</span>
-                    </div>
-                    <button class="win98-btn">×</button>
+            <div class="p-4 bg-black text-center">
+                <div id="countdown" class="font-mono text-2xl md:text-4xl text-[var(--y2k-lime)] drop-shadow-[0_0_5px_rgba(204,255,0,0.8)]">
+                    Loading...
                 </div>
-                <div class="bg-black p-1 h-80 overflow-y-auto font-mono text-sm border-2 border-gray-600 inset-box">
-                    <div class="text-[#00ff00] mb-2 sticky top-0 bg-black border-b border-[#00ff00] pb-1">
-                        > TRACK LIST TOP 20
-                    </div>
-                    <ul class="space-y-1 text-[#00ff00]" id="music-list">
-                        <!-- Music list injected by JS -->
-                    </ul>
-                </div>
+                <div class="text-[var(--win-gray)] text-xs mt-1">TIME REMAINING UNTIL NEXT LEVEL</div>
             </div>
         </div>
 
-        <!-- 4. Gallery (Full Width) -->
-        <div class="win98-box">
-            <div class="win98-header">
-                <div class="flex items-center gap-2">
-                    <span>🖼️</span>
-                    <span>C:\My Documents\My Pictures\2025</span>
-                </div>
-                <div class="flex gap-1">
-                    <button class="win98-btn">_</button>
-                    <button class="win98-btn">□</button>
-                    <button class="win98-btn">×</button>
-                </div>
-            </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             
-            <!-- Toolbar -->
-            <div class="bg-[#c0c0c0] p-1 border-b border-gray-400 flex gap-2 text-sm">
-                <div class="bg-white border inset-box px-2 py-0.5 w-full flex items-center">
-                    <span class="mr-2">Address:</span>
-                    <span class="text-gray-600">my2025.btm-m.site/images/</span>
+            <!-- Gallery Section -->
+            <div class="win98-window h-96 flex flex-col col-span-1 md:col-span-2">
+                <div class="win98-title-bar">
+                    <span><i class="fas fa-images mr-2"></i>Gallery_Viewer (35 Files)</span>
+                    <button class="win98-btn">?</button>
+                </div>
+                <div class="p-2 bg-white flex-1 overflow-y-auto scrollbar-retro win98-inset">
+                    <div class="grid grid-cols-4 md:grid-cols-7 gap-2" id="gallery-grid">
+                        <!-- JS will inject images here -->
+                    </div>
                 </div>
             </div>
 
-            <!-- Gallery Grid -->
-            <div class="bg-white p-4 h-96 overflow-y-scroll inset-box">
-                <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4" id="gallery-grid">
-                    <!-- Images injected by JS -->
+            <!-- Top 20 Songs -->
+            <div class="win98-window flex flex-col h-[500px]">
+                <div class="win98-title-bar bg-gradient-to-r from-purple-800 to-pink-600">
+                    <span><i class="fas fa-music mr-2"></i>WinAmp_Top20.playlist</span>
+                </div>
+                <div class="p-1 bg-black text-[#00ff00] font-mono text-xs mb-1">
+                    > LOADED 20 TRACKS<br>> SORT: RANKING
+                </div>
+                <div class="p-0 bg-white flex-1 overflow-y-auto scrollbar-retro win98-inset" id="song-list">
+                    <!-- JS will inject songs here -->
                 </div>
             </div>
-            <div class="bg-[#c0c0c0] p-1 text-xs font-mono flex justify-between px-2">
-                <span>35 object(s)</span>
-                <span>My Computer</span>
+
+            <!-- Works & Words Column -->
+            <div class="flex flex-col gap-8">
+                
+                <!-- Music Works -->
+                <div class="win98-window">
+                    <div class="win98-title-bar">
+                        <span><i class="fas fa-compact-disc mr-2"></i>Discography</span>
+                    </div>
+                    <div class="p-3 bg-[#c0c0c0] space-y-4">
+                        
+                        <!-- Release Item -->
+                        <div class="flex gap-3 items-center bg-white p-2 border border-gray-400 shadow-sm hover:bg-gray-50 transition-colors">
+                            <img src="https://links.btm-m.site/inner_Cover.png" class="w-16 h-16 object-cover border border-black" alt="inner">
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-lg leading-tight truncate">inner</h3>
+                                <p class="text-xs text-gray-500">2025-02-25</p>
+                                <a href="https://linkco.re/XThrYXSs" target="_blank" class="inline-block mt-1 text-xs bg-[var(--win-blue)] text-white px-2 py-1 hover:bg-pink-500">▶ LISTEN</a>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3 items-center bg-white p-2 border border-gray-400 shadow-sm hover:bg-gray-50 transition-colors">
+                            <img src="https://links.btm-m.site/AfterDream/AD.png" class="w-16 h-16 object-cover border border-black" alt="After Dream">
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-lg leading-tight truncate">After Dream</h3>
+                                <p class="text-xs text-gray-500">2025-03-09</p>
+                                <a href="https://links.btm-m.site/AfterDream/" target="_blank" class="inline-block mt-1 text-xs bg-[var(--win-blue)] text-white px-2 py-1 hover:bg-pink-500">▶ VISIT</a>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3 items-center bg-white p-2 border border-gray-400 shadow-sm hover:bg-gray-50 transition-colors">
+                            <img src="https://27.btm-m.site/SIC.png" class="w-16 h-16 object-cover border border-black" alt="Summer is Coming">
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-lg leading-tight truncate">Summer is Coming</h3>
+                                <p class="text-xs text-gray-500">2025-11-22</p>
+                                <a href="https://linkco.re/ab7hTd9v" target="_blank" class="inline-block mt-1 text-xs bg-[var(--win-blue)] text-white px-2 py-1 hover:bg-pink-500">▶ LISTEN</a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Word Works -->
+                <div class="win98-window flex-1">
+                    <div class="win98-title-bar bg-gradient-to-r from-yellow-700 to-yellow-500">
+                        <span><i class="fas fa-file-word mr-2"></i>My_Documents</span>
+                    </div>
+                    <div class="p-2 bg-white h-full win98-inset">
+                        <ul class="space-y-2 text-sm" id="word-works-list">
+                            <!-- JS Injected -->
+                        </ul>
+                    </div>
+                </div>
+
             </div>
         </div>
 
         <!-- Footer -->
-        <footer class="text-center pb-8 pt-4">
-            <p class="font-mono text-white text-sm">
-                <span class="inline-block animate-pulse">⚡</span> 
-                © 2025 btm_m All rights reserved. 
-                <span class="inline-block animate-pulse">⚡</span>
-            </p>
-            <div class="mt-2 text-xs text-gray-300">
-                Designed with <span class="text-pink-500">♥</span> and <span class="text-cyan-400">Windows 98</span>
+        <footer class="mt-12 text-center text-xs text-white font-mono">
+            <p class="mb-2">----------------------------------------</p>
+            <p>© 2025 btm_m All rights reserved.</p>
+            <p>Designed for Internet Explorer 5.0 (Just Kidding)</p>
+            <div class="mt-4">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/HTML5_Badge_32.png" class="inline h-6 opacity-50 grayscale hover:grayscale-0">
             </div>
         </footer>
 
     </div>
 
+    <!-- Image Modal -->
+    <div id="image-modal" class="modal-overlay" onclick="closeImageModal()">
+        <div class="win98-window p-1 max-w-[90vw] max-h-[90vh] flex flex-col" onclick="event.stopPropagation()">
+            <div class="win98-title-bar mb-1">
+                <span id="modal-img-title">Image_Viewer</span>
+                <button class="win98-btn" onclick="closeImageModal()">X</button>
+            </div>
+            <div class="bg-black p-2 flex justify-center items-center overflow-hidden">
+                <img id="modal-img-content" src="" class="max-w-full max-h-[80vh] object-contain border border-white">
+            </div>
+        </div>
+    </div>
+
+    <!-- Text/Doc Modal -->
+    <div id="doc-modal" class="modal-overlay" onclick="closeDocModal()">
+        <div class="win98-window p-1 w-[90vw] md:w-[600px] h-[80vh] flex flex-col" onclick="event.stopPropagation()">
+            <div class="win98-title-bar mb-1">
+                <span id="doc-title">Document_Reader</span>
+                <button class="win98-btn" onclick="closeDocModal()">X</button>
+            </div>
+            <div class="bg-white p-4 flex-1 overflow-y-auto scrollbar-retro win98-inset font-serif text-black leading-relaxed whitespace-pre-wrap" id="doc-content">
+                Loading...
+            </div>
+            <div class="bg-[#c0c0c0] p-1 flex justify-end">
+                <button class="win98-btn px-4 py-1" onclick="closeDocModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // --- Data Configuration ---
+        // --- DATA SETUP ---
+        const galleryImages = [];
+        // Generating 1 to 35 image URLs based on pattern
+        const specificImages = [1, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 2, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 3, 30, 31, 32, 33, 34, 35, 4, 5, 6, 7, 8, 9];
+        // Sort numerically for display or keep prompt order? Prompt order seems slightly mixed, let's just push them all.
+        specificImages.forEach(num => {
+            galleryImages.push(`https://my2025.btm-m.site/images/${num}.jpg`);
+        });
 
-        // 1. Works Data
-        const works = [
-            {
-                title: "inner",
-                date: "2025-02-25",
-                cover: "https://links.btm-m.site/inner_Cover.png",
-                link: "https://linkco.re/XThrYXSs"
-            },
-            {
-                title: "After Dream",
-                date: "2025-03-09",
-                cover: "https://links.btm-m.site/AfterDream/AD.png",
-                link: "https://links.btm-m.site/AfterDream/"
-            },
-            {
-                title: "Summer is Coming",
-                date: "2025-11-22",
-                cover: "https://27.btm-m.site/SIC.png",
-                link: "https://linkco.re/ab7hTd9v"
-            }
-        ];
-
-        // 2. Music Top 20 Data
         const topSongs = [
-            "BLUE BACK / じん", "Summering / じん", "涙くん、今日もおはようっ / ano", 
-            "ハローセカイ / DECO*27", "踊り子 / Vaundy", "この世界に二人だけ / ano", 
-            "再会 / Vaundy", "ずっとラブソング / Vaundy", "ちはる - From THE FIRST TAKE / キタニタツヤ", 
-            "Seeing Stars / Mori Calliope feat. Lotus Juice", "怪獣の花唄 -replica- / Vaundy", 
-            "アルジャーノン / ヨルシカ", "盗作 / ヨルシカ", "Past die Future / ano", 
-            "Life Will Change / Lyn", "フォニイ / ツミキ", "きゅうくらりん / いよわ", 
-            "花に風 / バルーン (須田景凪)", "サマータイムレコード (新録) / じん", "キスミーザウルス / DECO*27"
+            { rank: 1, title: "BLUE BACK", artist: "じん", jacket: "https://my2025.btm-m.site/jackets/1.jpg" },
+            { rank: 2, title: "Summering", artist: "じん", jacket: "https://my2025.btm-m.site/jackets/2.jpg" },
+            { rank: 3, title: "涙くん、今日もおはようっ", artist: "ano", jacket: "https://my2025.btm-m.site/jackets/3.jpg" },
+            { rank: 4, title: "ハローセカイ", artist: "DECO*27", jacket: "https://my2025.btm-m.site/jackets/4.jpg" }, // Predicted URL based on pattern
+            { rank: 5, title: "踊り子", artist: "Vaundy", jacket: "https://my2025.btm-m.site/jackets/5.jpg" },
+            { rank: 6, title: "この世界に二人だけ", artist: "ano", jacket: "https://my2025.btm-m.site/jackets/6.jpg" },
+            { rank: 7, title: "再会", artist: "Vaundy", jacket: "https://my2025.btm-m.site/jackets/7.jpg" },
+            { rank: 8, title: "ずっとラブソング", artist: "Vaundy", jacket: "https://my2025.btm-m.site/jackets/8.jpg" },
+            { rank: 9, title: "ちはる - From THE FIRST TAKE", artist: "キタニタツヤ", jacket: "https://my2025.btm-m.site/jackets/9.jpg" },
+            { rank: 10, title: "Seeing Stars", artist: "Mori Calliope feat. Lotus Juice", jacket: "https://my2025.btm-m.site/jackets/10.jpg" },
+            { rank: 11, title: "怪獣の花唄 -replica-", artist: "Vaundy", jacket: "https://my2025.btm-m.site/jackets/11.jpg" },
+            { rank: 12, title: "アルジャーノン", artist: "ヨルシカ", jacket: "https://my2025.btm-m.site/jackets/12.jpg" },
+            { rank: 13, title: "盗作", artist: "ヨルシカ", jacket: "https://my2025.btm-m.site/jackets/13.jpg" },
+            { rank: 14, title: "Past die Future", artist: "ano", jacket: "https://my2025.btm-m.site/jackets/14.jpg" },
+            { rank: 15, title: "Life Will Change", artist: "Lyn", jacket: "https://my2025.btm-m.site/jackets/15.jpg" },
+            { rank: 16, title: "フォニイ", artist: "ツミキ", jacket: "https://my2025.btm-m.site/jackets/16.jpg" },
+            { rank: 17, title: "きゅうくらりん", artist: "いよわ", jacket: "https://my2025.btm-m.site/jackets/17.jpg" },
+            { rank: 18, title: "花に風", artist: "バルーン (須田景凪)", jacket: "https://my2025.btm-m.site/jackets/18.jpg" },
+            { rank: 19, title: "サマータイムレコード (新録)", artist: "じん", jacket: "https://my2025.btm-m.site/jackets/19.jpg" },
+            { rank: 20, title: "キスミーザウルス", artist: "DECO*27", jacket: "https://my2025.btm-m.site/jackets/20.jpg" }
         ];
 
-        // 3. Gallery Images (Mixed HEIF and JPG)
-        const galleryFiles = [
-            "1.HEIF", "10.HEIF", "11.HEIF", "12.HEIF", "13.HEIF", "14.HEIF", "15.HEIF", "16.HEIF", 
-            "17.jpg", "18.jpg", "19.HEIF", "2.jpg", "20.jpg", "21.jpg", "22.jpg", "23.jpg", "24.jpg", 
-            "25.jpg", "26.jpg", "27.jpg", "28.jpg", "29.jpg", "3.HEIF", "30.jpg", "31.jpg", "32.jpg", 
-            "33.HEIF", "34.HEIF", "35.jpg", "4.HEIF", "5.HEIF", "6.HEIF", "7.HEIF", "8.HEIF", "9.HEIF"
+        const wordWorks = [
+            { title: "Always Your Birthday", url: "https://my2025.btm-m.site/AlwaysYourBirthday.txt", type: "txt" },
+            { title: "inner", url: "https://my2025.btm-m.site/inner.txt", type: "txt" },
+            { title: "Summer is Coming", url: "https://my2025.btm-m.site/SummerisComing.txt", type: "txt" },
+            { title: "十月初", url: "https://my2025.btm-m.site/十月初.docx", type: "docx" },
+            { title: "My Journey with J-Pop", url: "https://my2025.btm-m.site/jpop.docx", type: "docx" }
         ];
-        const galleryBaseUrl = "https://my2025.btm-m.site/images/";
 
-        // --- Logic Implementation ---
+        // --- INIT FUNCTIONS ---
 
-        // A. Render Works
-        const worksContainer = document.getElementById('works-container');
-        works.forEach(work => {
-            const workHtml = `
-                <a href="${work.link}" target="_blank" class="block group">
-                    <div class="bg-white border-2 border-gray-600 p-2 flex gap-3 items-center hover:bg-pink-100 transition-colors shadow-[2px_2px_0_rgba(0,0,0,0.2)]">
-                        <img src="${work.cover}" alt="${work.title}" class="w-16 h-16 object-cover border border-black group-hover:rotate-6 transition-transform">
-                        <div>
-                            <h3 class="font-bold text-lg leading-tight font-sans">${work.title}</h3>
-                            <p class="text-sm font-mono text-gray-600 bg-yellow-200 inline-block px-1 mt-1">${work.date}</p>
-                        </div>
-                        <div class="ml-auto text-xl group-hover:translate-x-1 transition-transform">➡️</div>
-                    </div>
-                </a>
-            `;
-            worksContainer.insertAdjacentHTML('beforeend', workHtml);
-        });
-
-        // B. Render Music List
-        const musicList = document.getElementById('music-list');
-        topSongs.forEach((song, index) => {
-            const num = (index + 1).toString().padStart(2, '0');
-            const li = document.createElement('li');
-            li.className = "music-row p-1 truncate hover:text-white";
-            li.innerHTML = `<span class="opacity-50 mr-2">${num}.</span>${song}`;
-            musicList.appendChild(li);
-        });
-
-        // C. Render Gallery (Improved with Fallback)
-        const galleryGrid = document.getElementById('gallery-grid');
-        
-        // Custom SVG Placeholder for HEIF
-        const heifPlaceholder = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='black' stroke-width='2'><rect x='5' y='5' width='90' height='90' fill='%23f0f0f0' /><text x='50' y='50' text-anchor='middle' font-family='monospace' font-size='16' fill='%23333'>HEIF</text><text x='50' y='70' text-anchor='middle' font-family='monospace' font-size='10' fill='%23666'>HDR IMAGE</text><path d='M20,20 L80,20 M20,80 L80,80' stroke-dasharray='4,4'/></svg>`;
-
-        galleryFiles.forEach(file => {
-            const fullUrl = galleryBaseUrl + file;
-            const isHeif = file.toLowerCase().endsWith('.heif');
-            
+        // 1. Render Gallery
+        const galleryContainer = document.getElementById('gallery-grid');
+        galleryImages.forEach((src) => {
             const div = document.createElement('div');
-            div.className = "flex flex-col items-center gap-1 cursor-pointer group";
-            
-            const imgContainer = document.createElement('div');
-            imgContainer.className = "w-full aspect-square bg-gray-200 border border-gray-400 p-1 group-hover:bg-blue-800 group-hover:border-blue-800 relative overflow-hidden";
-            
-            const img = document.createElement('img');
-            img.src = fullUrl;
-            img.loading = "lazy";
-            img.className = "w-full h-full object-cover gallery-img";
-            img.alt = file;
-            
-            // ERROR HANDLING: If browser can't render HEIF, switch to placeholder
-            img.onerror = function() {
-                this.onerror = null; // Prevent infinite loop
-                this.src = heifPlaceholder;
-                this.style.objectFit = 'contain';
-                this.style.padding = '5px';
-            };
-
-            imgContainer.appendChild(img);
-
-            // HDR Badge
-            if (isHeif) {
-                const badge = document.createElement('span');
-                badge.className = "absolute bottom-0 right-0 bg-blue-600 text-white text-[9px] px-1 font-mono";
-                badge.innerText = "HDR";
-                imgContainer.appendChild(badge);
-            }
-
-            const caption = document.createElement('span');
-            caption.className = "text-xs font-mono truncate w-full text-center group-hover:bg-blue-800 group-hover:text-white px-1";
-            caption.innerText = file;
-
-            div.appendChild(imgContainer);
-            div.appendChild(caption);
-            
-            // Click to open original file (even if placeholder is shown)
-            div.onclick = () => {
-                window.open(fullUrl, '_blank');
-            };
-            
-            galleryGrid.appendChild(div);
+            div.className = "aspect-square bg-gray-200 border border-gray-500 cursor-pointer hover:border-pink-500 hover:scale-105 transition-transform overflow-hidden relative group";
+            div.innerHTML = `
+                <img src="${src}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100" loading="lazy" onerror="this.src='https://placehold.co/100x100?text=IMG'">
+                <div class="absolute bottom-0 left-0 w-full bg-black/50 text-white text-[10px] p-0.5 opacity-0 group-hover:opacity-100">VIEW</div>
+            `;
+            div.onclick = () => openImageModal(src);
+            galleryContainer.appendChild(div);
         });
 
-        // D. Countdown Timer
-        const targetDate = new Date('2026-01-01T00:00:00').getTime();
-        const countdownEl = document.getElementById('countdown');
+        // 2. Render Songs
+        const songContainer = document.getElementById('song-list');
+        topSongs.forEach((song) => {
+            const row = document.createElement('div');
+            row.className = "flex items-center gap-2 p-2 border-b border-gray-200 hover:bg-[#e0e0ff] transition-colors cursor-default group";
+            
+            // Format rank number 01, 02 etc.
+            const rankStr = song.rank.toString().padStart(2, '0');
+            
+            // Rank Color Logic
+            let rankColor = "text-gray-500";
+            if(song.rank === 1) rankColor = "text-[#ccff00] text-shadow-black font-bold";
+            if(song.rank === 2) rankColor = "text-gray-400 font-bold";
+            if(song.rank === 3) rankColor = "text-orange-400 font-bold";
 
+            row.innerHTML = `
+                <div class="font-mono text-xl ${rankColor} w-8 text-right drop-shadow-md">${rankStr}</div>
+                <img src="${song.jacket}" class="w-10 h-10 border border-black shadow-sm group-hover:rotate-3 transition-transform" onerror="this.src='https://placehold.co/40x40?text=CD'">
+                <div class="flex-1 min-w-0">
+                    <div class="font-bold text-sm truncate text-[#000080]">${song.title}</div>
+                    <div class="text-xs text-gray-600 truncate">${song.artist}</div>
+                </div>
+            `;
+            songContainer.appendChild(row);
+        });
+
+        // 3. Render Word Works
+        const wordList = document.getElementById('word-works-list');
+        wordWorks.forEach(work => {
+            const li = document.createElement('li');
+            li.className = "flex items-center gap-2 hover:bg-yellow-100 p-1 cursor-pointer border border-transparent hover:border-dotted hover:border-black";
+            // Icon selection
+            const iconClass = work.type === 'docx' ? 'fa-file-word text-blue-600' : 'fa-file-alt text-gray-600';
+            
+            li.innerHTML = `<i class="fas ${iconClass}"></i> <span class="underline decoration-dotted">${work.title}</span> <span class="text-[10px] bg-gray-200 px-1 ml-auto">${work.type.toUpperCase()}</span>`;
+            li.onclick = () => openDoc(work.url, work.type, work.title);
+            wordList.appendChild(li);
+        });
+
+        // --- MODAL LOGIC ---
+
+        function openImageModal(src) {
+            document.getElementById('modal-img-content').src = src;
+            document.getElementById('modal-img-title').innerText = "Viewing: " + src.split('/').pop();
+            document.getElementById('image-modal').classList.add('active');
+        }
+
+        function closeImageModal() {
+            document.getElementById('image-modal').classList.remove('active');
+        }
+
+        async function openDoc(url, type, title) {
+            const modal = document.getElementById('doc-modal');
+            const titleEl = document.getElementById('doc-title');
+            const contentEl = document.getElementById('doc-content');
+            
+            modal.classList.add('active');
+            titleEl.innerText = title;
+            contentEl.innerHTML = '<div class="text-center mt-10"><i class="fas fa-spinner fa-spin text-2xl"></i><br>Loading Document...</div>';
+
+            try {
+                // Fetch the file
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                if (type === 'txt') {
+                    const text = await response.text();
+                    contentEl.innerText = text;
+                } else if (type === 'docx') {
+                    const arrayBuffer = await response.arrayBuffer();
+                    // Use Mammoth to convert docx to HTML
+                    mammoth.convertToHtml({arrayBuffer: arrayBuffer})
+                        .then(displayResult)
+                        .catch(handleError);
+                    
+                    function displayResult(result) {
+                        contentEl.innerHTML = result.value;
+                    }
+                    function handleError(err) {
+                        console.error(err);
+                        contentEl.innerHTML = `<div class="text-red-600 p-4 border border-red-600 bg-red-50">
+                            <strong>Error reading .docx file.</strong><br>
+                            This might be due to Cross-Origin (CORS) restrictions on the server.<br><br>
+                            <a href="${url}" target="_blank" class="underline text-blue-600">Click here to download/view the file directly.</a>
+                        </div>`;
+                    }
+                }
+            } catch (error) {
+                contentEl.innerHTML = `<div class="text-red-600 p-4">
+                    <strong>Failed to load file.</strong><br>
+                    Possible reasons: CORS policy, file not found, or network error.<br><br>
+                    <a href="${url}" target="_blank" class="underline text-blue-600">Open file directly</a>
+                </div>`;
+            }
+        }
+
+        function closeDocModal() {
+            document.getElementById('doc-modal').classList.remove('active');
+        }
+
+        // --- COUNTDOWN LOGIC ---
         function updateCountdown() {
-            const now = new Date().getTime();
-            const distance = targetDate - now;
+            const now = new Date();
+            const target = new Date('2026-01-01T00:00:00');
+            const diff = target - now;
 
-            if (distance < 0) {
-                countdownEl.innerHTML = "HAPPY NEW YEAR 2026!";
-                countdownEl.classList.remove('text-red-500');
-                countdownEl.classList.add('text-green-500', 'rainbow-text');
+            if (diff <= 0) {
+                document.getElementById('countdown').innerHTML = "HAPPY NEW YEAR 2026!";
                 return;
             }
 
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-            countdownEl.innerText = `${days}d ${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`;
+            document.getElementById('countdown').innerHTML = 
+                `${days}d ${hours.toString().padStart(2,'0')}h ${minutes.toString().padStart(2,'0')}m ${seconds.toString().padStart(2,'0')}s`;
         }
 
         setInterval(updateCountdown, 1000);
